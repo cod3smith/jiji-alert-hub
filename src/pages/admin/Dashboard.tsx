@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StatCard } from "@/components/ui/stat-card";
+import { MetricsChart } from "@/components/charts/MetricsChart";
 import { 
   Users, 
   AlertTriangle, 
@@ -11,42 +13,55 @@ import {
   TrendingUp,
   Clock,
   Shield,
-  Droplets
+  Droplets,
+  RefreshCw
 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function Dashboard() {
-  const statsCards = [
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      setLastUpdated(new Date());
+    }, 1500);
+  };
+
+  const statsData = [
     {
       title: "Registered Users",
       value: "2,847",
-      change: "+12%",
+      change: { value: "+12%", type: "positive" as const },
       icon: Users,
       description: "Active community members",
-      color: "text-primary"
+      trend: "up" as const
     },
     {
-      title: "Offline Users",
+      title: "Offline Users", 
       value: "156",
-      change: "-5%",
+      change: { value: "-5%", type: "positive" as const },
       icon: Wifi,
       description: "Users currently offline",
-      color: "text-warning"
+      trend: "down" as const
     },
     {
       title: "Alerts Sent (24h)",
       value: "43",
-      change: "+23%",
+      change: { value: "+23%", type: "negative" as const },
       icon: AlertTriangle,
       description: "Flood warnings distributed",
-      color: "text-destructive"
+      trend: "up" as const
     },
     {
       title: "Tree Planting Actions",
       value: "38",
-      change: "+8%",
+      change: { value: "+8%", type: "positive" as const },
       icon: TreePine,
       description: "This week's eco-actions",
-      color: "text-success"
+      trend: "up" as const
     }
   ];
 
@@ -65,37 +80,58 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard Overview</h1>
-        <p className="text-muted-foreground mt-2">
-          Real-time monitoring of flood warnings and eco-restoration activities
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard Overview</h1>
+          <p className="text-muted-foreground mt-2">
+            Real-time monitoring of flood warnings and eco-restoration activities
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </p>
+        </div>
+        <Button 
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          variant="outline"
+          className="gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsCards.map((stat, index) => (
-          <Card key={index} className="shadow-warm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="flex items-center gap-1 text-xs">
-                <span className={stat.change.startsWith('+') ? 'text-success' : 'text-warning'}>
-                  {stat.change}
-                </span>
-                <span className="text-muted-foreground">from last week</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {stat.description}
-              </p>
-            </CardContent>
-          </Card>
+        {statsData.map((stat, index) => (
+          <StatCard
+            key={index}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            icon={stat.icon}
+            description={stat.description}
+            trend={stat.trend}
+          />
         ))}
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MetricsChart
+          type="area"
+          title="Alert Trends"
+          description="Flood alerts sent over time"
+          dataKey="alerts"
+          color="hsl(var(--destructive))"
+        />
+        <MetricsChart
+          type="line"
+          title="User Growth"
+          description="Community member registration"
+          dataKey="users"
+          color="hsl(var(--primary))"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

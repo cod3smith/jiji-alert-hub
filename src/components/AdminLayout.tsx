@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { Bell, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export function AdminLayout() {
   return (
@@ -38,7 +39,10 @@ export function AdminLayout() {
           
           {/* Main Content */}
           <main className="flex-1 p-4 lg:p-6 overflow-auto">
-            <Outlet />
+            <div className="space-y-4">
+              <Breadcrumbs />
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>
