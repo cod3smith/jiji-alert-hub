@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Globe, Shield, Users, AlertTriangle, TreePine, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PublicMapView } from "@/components/PublicMapView";
 
 const Index = () => {
   return (
@@ -19,11 +20,14 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">Flood Early Warning & Eco-Restoration Platform</p>
             </div>
           </div>
-          <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link to="/admin">
-              Admin Portal <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
+          <div className="flex gap-4">
+            <Button asChild>
+              <Link to="/admin">Admin Portal</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/auth">Sign In</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -113,6 +117,11 @@ const Index = () => {
             </CardContent>
           </Card>
         </div>
+      </section>
+
+      {/* Public Map */}
+      <section className="container mx-auto px-4 py-16">
+        <PublicMapView />
       </section>
 
       {/* Footer */}

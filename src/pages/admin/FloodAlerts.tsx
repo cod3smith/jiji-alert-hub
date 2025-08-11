@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,9 +20,34 @@ import {
   Target,
   Send
 } from "lucide-react";
+import { supabase } from '@/integrations/supabase/client';
 
 export default function FloodAlertsPage() {
-  const alerts = [
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAlerts();
+  }, []);
+
+  const fetchAlerts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('climate_alerts')
+        .select('*')
+        .eq('alert_type', 'flood')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAlerts(data || []);
+    } catch (error) {
+      console.error('Error fetching flood alerts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mockAlerts = [
     {
       id: 1,
       title: "Severe Flood Warning - Kisumu",
@@ -59,6 +85,8 @@ export default function FloodAlertsPage() {
       p2pConfirmation: 78
     }
   ];
+
+  const displayAlerts = alerts.length > 0 ? alerts : mockAlerts;
 
   const getSeverityBadge = (severity: string) => {
     const colors = {
@@ -257,7 +285,7 @@ export default function FloodAlertsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {alerts.map((alert) => (
+                {displayAlerts.map((alert) => (
                   <TableRow key={alert.id}>
                     <TableCell>
                       <div>

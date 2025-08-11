@@ -25,11 +25,11 @@ import { NavLink, useLocation } from "react-router-dom";
 
 const navigationItems = [
   { title: "Dashboard", url: "/admin", icon: Home },
+  { title: "Alerts", url: "/admin/alerts", icon: AlertTriangle },
+  { title: "Reports", url: "/admin/reports", icon: FileText },
+  { title: "Projects", url: "/admin/projects", icon: TreePine },
   { title: "Users", url: "/admin/users", icon: Users },
-  { title: "Flood Alerts", url: "/admin/alerts", icon: AlertTriangle },
-  { title: "Community Reports", url: "/admin/reports", icon: FileText },
-  { title: "Eco-Restoration", url: "/admin/eco-restoration", icon: TreePine },
-  { title: "Connectivity", url: "/admin/connectivity", icon: Wifi },
+  { title: "Disbursements", url: "/admin/disbursements", icon: Activity },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ];
 
